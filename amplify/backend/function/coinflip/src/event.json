@@ -2,10 +2,16 @@
     "resource": "/coinflip",
     "path": "/coinflip",
     "httpMethod": "POST",
-    "body": {"action":"new",
+    "body1": {"action":"new",
             "user_id":"1",
             "amount":"100",
             "side":0
           },
+    "body": {"action":"join",
+            "user_id":"2",
+            "bet_id":"7"
+          },
+    "body2": {"action":"get"
+        },
     "isBase64Encoded": "False"
 }

@@ -49,14 +49,14 @@ def main(event):
 
     try:
         action = parser["action"]
-        user_id = parser["user_id"]
-        amount = str(parser["amount"])
     except Exception as e:
         return False, "Invalid request! (1010)"
 
     if action == "new":
         try:
             side = parser["side"]
+            user_id = str(parser["user_id"])
+            amount = str(parser["amount"])
         except:
             return False, "Invalid request! (1020-1)"
         
@@ -80,7 +80,7 @@ def main(event):
             
             #----------GET RANDOM SEED
             query = "SELECT `random_seed`\
-                    FROM `random_seed`\
+                    FROM `CORE_RANDOM_SEED`\
                     WHERE `date` = STR_TO_DATE(%s, '%%Y-%%m-%%d')"
 
             cursor.execute(query, [today])
@@ -93,7 +93,7 @@ def main(event):
             
             #----------GET CLIENT SEED
             query = "SELECT `client_seed`\
-                    FROM `user`\
+                    FROM `UM_USER`\
                     WHERE `user_id` = %s"
 
             cursor.execute(query, [user_id])
@@ -113,7 +113,7 @@ def main(event):
 
 
             #----------INSERT BET SEED
-            query = "INSERT INTO `coinflip_bet` (`amount`, `random_seed`, `result`, `timestamp`)\
+            query = "INSERT INTO `G_CF_BET` (`amount`, `random_seed`, `result`, `effective_date`)\
                     VALUES(%s, %s, %s, NOW())"
             
             cursor.execute(query, [amount, random_seed, result])
@@ -121,7 +121,7 @@ def main(event):
 
             #----------SELECT BET ID
             query = "SELECT `bet_id`\
-                    FROM `coinflip_bet`\
+                    FROM `G_CF_BET`\
                     WHERE `amount` = %s\
                         AND `random_seed` = %s\
                         AND `result` = %s"
@@ -135,22 +135,141 @@ def main(event):
             bet_id = response[0]['bet_id']
 
             #----------INSERT BET USER
-            query = "INSERT INTO `coinflip_user`(`bet_id`, `user_id`, `side`, `timestamp`)\
+            query = "INSERT INTO `G_CF_USER`(`bet_id`, `user_id`, `side`, `effective_date`)\
                     VALUES(%s, %s, %s, NOW())"
             
             cursor.execute(query, [bet_id, user_id, side])
             conn.commit()
 
             return True, {
-                'bet_id': bet_id
+                'bet_id': bet_id,
+                'user_id': user_id,
+                'side': side
             }
+
 
     elif action == "join":
         try:
-            bet_id = parser["bet_id"]
+            user_id = str(parser["user_id"])
+            bet_id = str(parser["bet_id"])
         except:
             return False, "Invalid request! (1020-2)"
-        return True, "Join existing Bet for '" + str(bet_id) + "' at " + str(time.time())
+
+        status, conn = connect(db_host, db_usr, db_pwd, db_name)
+        if not status:
+            return False, "Database Error! " + str(conn)
+        
+        with conn.cursor() as cursor:
+            #----------GET OPPOSITE SIDE
+            query = "SELECT CB.`bet_id`\
+                            ,CB.`amount`\
+                            ,CU.`user_id`\
+                            ,CU.`side`\
+                    FROM `G_CF_BET` CB\
+                        ,`G_CF_USER` CU\
+                    WHERE 1=1\
+                        AND CB.`bet_id` = %s\
+                        AND CU.`bet_id` = CB.`bet_id`\
+                        AND 1 = (\
+                            SELECT COUNT(CU.`bet_id`)\
+                            FROM `G_CF_USER` CU\
+                            WHERE CB.`bet_id` = CU.`bet_id`\
+                        )"
+            cursor.execute(query, [bet_id])
+            response = cursor.fetchall()
+            if not response:
+                return True, "Bet ID does not exist or has been expired!"
+            
+            side = response[0]['side']
+            side = '0' if side == '1' else '1'
+
+            #----------INSERT INTO USER BET
+            query = "INSERT INTO `G_CF_USER` (`bet_id`, `user_id`, `side`, `effective_date`)\
+                    SELECT * FROM (\
+                        SELECT %s as `bet_id`\
+                            ,%s as `user_id`\
+                            ,%s as `side`\
+                            ,NOW() as `effective_date`\
+                    ) AS tmp\
+                    WHERE EXISTS (\
+                        SELECT 1\
+                        FROM `G_CF_BET` CB\
+                            ,`G_CF_USER` CU\
+                        WHERE 1=1\
+                            AND CB.`bet_id` = %s\
+                            AND CU.`bet_id` = CB.`bet_id`\
+                            AND 1 = (\
+                                SELECT COUNT(CU.`bet_id`)\
+                                FROM `G_CF_USER` CU\
+                                WHERE CB.`bet_id` = CU.`bet_id`\
+                            )\
+                    )"
+            cursor.execute(query, [bet_id, user_id, side, bet_id])
+            conn.commit()
+
+            #----------CHECK IF USER JOIN BET
+            query = "SELECT CB.`result`\
+                    FROM `G_CF_BET` CB\
+                        ,`G_CF_USER` CU\
+                    WHERE 1=1\
+                        AND CB.`bet_id` = %s\
+                        AND CU.`bet_id` = CB.`bet_id`\
+                        AND CU.`user_id` = %s\
+                        AND 2 = (\
+                            SELECT COUNT(CU.`bet_id`)\
+                            FROM `G_CF_USER` CU\
+                            WHERE CB.`bet_id` = CU.`bet_id`\
+                        )"
+            cursor.execute(query, [bet_id, user_id])
+            response = cursor.fetchall()
+
+            if not response:
+                return True, "Bet ID does not exist or has been expired!"
+
+            return True, {'result': response[0]['result']}
+            
+
+    
+    elif action == "get":
+        #----------GET EXISTING BET
+        status, conn = connect(db_host, db_usr, db_pwd, db_name)
+        if not status:
+            return False, "Database Error! " + str(conn)
+        
+        with conn.cursor() as cursor:
+            query = "SELECT CB.`bet_id`\
+                            ,CB.`amount`\
+                            ,CU.`user_id`\
+                            ,CU.`side`\
+                            ,U.`display_name`\
+                    FROM `G_CF_BET` CB\
+                        ,`G_CF_USER` CU\
+                        ,`UM_USER` U\
+                    WHERE 1=1\
+                        AND CU.`bet_id` = CB.`bet_id`\
+                        AND U.`user_id` = CU.`user_id`\
+                        AND 1 = (\
+                            SELECT COUNT(CU.`bet_id`)\
+                            FROM `G_CF_USER` CU\
+                            WHERE CB.`bet_id` = CU.`bet_id`\
+                        )"
+            cursor.execute(query, [])
+            response = cursor.fetchall()
+
+            if not response:
+                return True, "No existing bet!"
+            
+            data = []
+            for res in response:
+                data.append({
+                            'bet_id': str(res['bet_id']),
+                            'user_id': str(res['user_id']),
+                            'side': res['side'],
+                            'amount': res['amount'],
+                            'display_name': res['display_name']
+                })
+
+            return True, data
     else:
         return False, "Invalid request! (1020-3)"
 

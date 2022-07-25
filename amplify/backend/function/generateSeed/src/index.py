@@ -1,3 +1,4 @@
+from msilib import datasizemask
 import os
 import json
 import time
@@ -53,7 +54,7 @@ def main(event):
     with conn.cursor() as cursor:
         date = datetime.date.today().strftime("%Y-%m-%d")
         query = "SELECT count(*) AS `count`\
-                FROM `random_seed`\
+                FROM `CORE_RANDOM_SEED`\
                 WHERE STR_TO_DATE(%s, '%%Y-%%m-%%d') = `date`"
 
         cursor.execute(query, [date])
@@ -68,30 +69,25 @@ def main(event):
         #-----Check Random Seed Exist---
         while True:
             random_seed = get_string(64)
-            query = "SELECT count(*) AS `count`\
-                    FROM `random_seed`\
-                    WHERE `random_seed` = %s"
+            masked_seed = random_seed[:16] + "*"*32 + random_seed[48:]
+            hashed_seed = hashlib.sha256(random_seed.encode()).hexdigest()
+            query = "INSERT IGNORE INTO `CORE_RANDOM_SEED` (`date`, `random_seed`, `masked_seed`, `hashed_seed`, `generated_time`)\
+                        VALUES (STR_TO_DATE(%s, '%%Y-%%m-%%d'), %s, %s, %s, NOW())"
 
-            cursor.execute(query, [random_seed])
+            cursor.execute(query, [date, random_seed, masked_seed, hashed_seed])
+            conn.commit()
+
+            query = "SELECT 1\
+                    FROM `CORE_RANDOM_SEED`\
+                    WHERE 1=1\
+                        AND `random_seed` = %s\
+                        AND `date` = STR_TO_DATE(%s, '%%Y-%%m-%%d')"
+
+            cursor.execute(query, [random_seed, date])
             response = cursor.fetchall()
 
-            if not response:
-                return False, "Database Error!"
-
-            if response[0]['count'] == 0:
-                break
-        #-----Check Random Seed Exist---
-
-        masked_seed = random_seed[:16] + "*"*32 + random_seed[48:]
-        hashed_seed = hashlib.sha256(random_seed.encode()).hexdigest()
-
-        query = "INSERT INTO `random_seed` (`date`, `random_seed`, `masked_seed`, `hashed_seed`, `generated_time`)\
-                VALUES (STR_TO_DATE(%s, '%%Y-%%m-%%d'), %s, %s, %s, NOW())"
-
-        cursor.execute(query, [date, random_seed, masked_seed, hashed_seed])
-        conn.commit()
-
-        return True, "New seed generated."
+            if response:
+                return True, "New seed generated!"
     return False, "Database Error!"
     
 

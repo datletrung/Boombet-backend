@@ -70,9 +70,8 @@ def main(event):
                         ELSE `random_seed`\
                         END\
                         ) AS `seed`,\
-                        `hashed_seed`,\
-                        `generated_time`\
-                FROM `random_seed`"
+                        `hashed_seed`\
+                FROM `CORE_RANDOM_SEED`"
 
         if not select_all:      #------------SELECT only 1 specific date
             query += "WHERE STR_TO_DATE(%s, '%%Y-%%m-%%d') = `date`"
@@ -86,8 +85,7 @@ def main(event):
 
             return True, [{'date':str(response[0]['date']),
                           'seed':response[0]['seed'],
-                          'hashed_seed':response[0]['hashed_seed'],
-                          'generated_time':str(response[0]['generated_time'])
+                          'hashed_seed':response[0]['hashed_seed']
                          }]
         else:                   #------------SELECT all historical data
             query += "ORDER BY `date` DESC"
@@ -106,8 +104,7 @@ def main(event):
                 data.append({
                     'date':str(res['date']),
                     'seed':res['seed'],
-                    'hashed_seed':res['hashed_seed'],
-                    'generated_time':str(res['generated_time'])
+                    'hashed_seed':res['hashed_seed']
                 })
             if not today_seed_exist:
                 return False, "Daily seed not found!"

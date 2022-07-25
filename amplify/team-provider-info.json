@@ -19,15 +19,15 @@
         },
         "coinflip": {
           "deploymentBucketName": "amplify-boombet-boombet-91000-deployment",
-          "s3Key": "amplify-builds/coinflip-65714e772f65616d4537-build.zip"
+          "s3Key": "amplify-builds/coinflip-6d76325477464778744c-build.zip"
         },
         "generateSeed": {
           "deploymentBucketName": "amplify-boombet-boombet-91000-deployment",
-          "s3Key": "amplify-builds/generateSeed-3770576355354a4c4d67-build.zip"
+          "s3Key": "amplify-builds/generateSeed-67764342506b45444545-build.zip"
         },
         "getSeed": {
           "deploymentBucketName": "amplify-boombet-boombet-91000-deployment",
-          "s3Key": "amplify-builds/getSeed-503535567865546c4c6b-build.zip"
+          "s3Key": "amplify-builds/getSeed-74566172313457534a77-build.zip"
         },
         "roulette": {
           "deploymentBucketName": "amplify-boombet-boombet-91000-deployment",
