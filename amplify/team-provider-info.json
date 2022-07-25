@@ -1,0 +1,39 @@
+{
+  "boombet": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-boombet-boombet-91000-authRole",
+      "UnauthRoleArn": "arn:aws:iam::926771674865:role/amplify-boombet-boombet-91000-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::926771674865:role/amplify-boombet-boombet-91000-authRole",
+      "Region": "us-east-2",
+      "DeploymentBucketName": "amplify-boombet-boombet-91000-deployment",
+      "UnauthRoleName": "amplify-boombet-boombet-91000-unauthRole",
+      "StackName": "amplify-boombet-boombet-91000",
+      "StackId": "arn:aws:cloudformation:us-east-2:926771674865:stack/amplify-boombet-boombet-91000/e3362b10-036d-11ed-8432-06eea75cfe30",
+      "AmplifyAppId": "d27ze86a8fr4k6"
+    },
+    "categories": {
+      "function": {
+        "ping": {
+          "deploymentBucketName": "amplify-boombet-boombet-91000-deployment",
+          "s3Key": "amplify-builds/ping-58366272544137467354-build.zip"
+        },
+        "coinflip": {
+          "deploymentBucketName": "amplify-boombet-boombet-91000-deployment",
+          "s3Key": "amplify-builds/coinflip-65714e772f65616d4537-build.zip"
+        },
+        "generateSeed": {
+          "deploymentBucketName": "amplify-boombet-boombet-91000-deployment",
+          "s3Key": "amplify-builds/generateSeed-3770576355354a4c4d67-build.zip"
+        },
+        "getSeed": {
+          "deploymentBucketName": "amplify-boombet-boombet-91000-deployment",
+          "s3Key": "amplify-builds/getSeed-503535567865546c4c6b-build.zip"
+        },
+        "roulette": {
+          "deploymentBucketName": "amplify-boombet-boombet-91000-deployment",
+          "s3Key": "amplify-builds/roulette-4e6771496445432f5763-build.zip"
+        }
+      }
+    }
+  }
+}

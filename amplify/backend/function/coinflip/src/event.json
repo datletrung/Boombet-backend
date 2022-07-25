@@ -1,0 +1,11 @@
+{
+    "resource": "/coinflip",
+    "path": "/coinflip",
+    "httpMethod": "POST",
+    "body": {"action":"new",
+            "user_id":"1",
+            "amount":"100",
+            "side":0
+          },
+    "isBase64Encoded": "False"
+}

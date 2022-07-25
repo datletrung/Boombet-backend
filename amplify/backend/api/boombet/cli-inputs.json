@@ -1,0 +1,40 @@
+{
+  "version": 1,
+  "paths": {
+    "/ping": {
+      "name": "/ping",
+      "lambdaFunction": "ping",
+      "permissions": {
+        "setting": "open"
+      }
+    },
+    "/coinflip": {
+      "name": "/coinflip",
+      "lambdaFunction": "coinflip",
+      "permissions": {
+        "setting": "open"
+      }
+    },
+    "/generateSeed": {
+      "name": "/generateSeed",
+      "lambdaFunction": "generateSeed",
+      "permissions": {
+        "setting": "open"
+      }
+    },
+    "/getSeed": {
+      "name": "/getSeed",
+      "lambdaFunction": "getSeed",
+      "permissions": {
+        "setting": "open"
+      }
+    },
+    "/roulette": {
+      "name": "/roulette",
+      "lambdaFunction": "roulette",
+      "permissions": {
+        "setting": "open"
+      }
+    }
+  }
+}
