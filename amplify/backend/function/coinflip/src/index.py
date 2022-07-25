@@ -142,7 +142,6 @@ def main(event):
             conn.commit()
 
             return True, {
-                'msg': True,
                 'bet_id': bet_id
             }
 
