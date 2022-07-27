@@ -23,7 +23,7 @@
         },
         "generateSeed": {
           "deploymentBucketName": "amplify-boombet-boombet-91000-deployment",
-          "s3Key": "amplify-builds/generateSeed-67764342506b45444545-build.zip"
+          "s3Key": "amplify-builds/generateSeed-4e704f6e614744527a49-build.zip"
         },
         "getSeed": {
           "deploymentBucketName": "amplify-boombet-boombet-91000-deployment",

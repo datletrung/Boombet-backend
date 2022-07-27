@@ -71,7 +71,7 @@ def main(event):
             random_seed = get_string(64)
             masked_seed = random_seed[:16] + "*"*32 + random_seed[48:]
             hashed_seed = hashlib.sha256(random_seed.encode()).hexdigest()
-            query = "INSERT IGNORE INTO `CORE_RANDOM_SEED` (`date`, `random_seed`, `masked_seed`, `hashed_seed`, `generated_time`)\
+            query = "INSERT IGNORE INTO `CORE_RANDOM_SEED` (`date`, `random_seed`, `masked_seed`, `hashed_seed`, `effective_date`)\
                         VALUES (STR_TO_DATE(%s, '%%Y-%%m-%%d'), %s, %s, %s, NOW())"
 
             cursor.execute(query, [date, random_seed, masked_seed, hashed_seed])
