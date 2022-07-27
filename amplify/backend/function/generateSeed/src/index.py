@@ -1,4 +1,3 @@
-from msilib import datasizemask
 import os
 import json
 import time
