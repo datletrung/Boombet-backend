@@ -35,7 +35,7 @@
         },
         "accountAuth": {
           "deploymentBucketName": "amplify-boombet-boombet-91000-deployment",
-          "s3Key": "amplify-builds/accountAuth-6a35496a4d2b4c6a672f-build.zip"
+          "s3Key": "amplify-builds/accountAuth-7232374b586832576859-build.zip"
         }
       }
     }
