@@ -75,7 +75,7 @@ def main(event):
             cursor.execute(query, [username, password])
             response = cursor.fetchall()
             if not response:
-                return True, 'User ID or Password is incorrect!'
+                return True, 'Username or Password is incorrect!'
 
             user_id = response[0]['user_id']
             display_name = response[0]['display_name']
