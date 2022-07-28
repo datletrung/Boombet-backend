@@ -19,7 +19,7 @@
         },
         "coinflip": {
           "deploymentBucketName": "amplify-boombet-boombet-91000-deployment",
-          "s3Key": "amplify-builds/coinflip-6d76325477464778744c-build.zip"
+          "s3Key": "amplify-builds/coinflip-48785a37504765322b41-build.zip"
         },
         "generateSeed": {
           "deploymentBucketName": "amplify-boombet-boombet-91000-deployment",
@@ -32,6 +32,10 @@
         "roulette": {
           "deploymentBucketName": "amplify-boombet-boombet-91000-deployment",
           "s3Key": "amplify-builds/roulette-4e6771496445432f5763-build.zip"
+        },
+        "accountAuth": {
+          "deploymentBucketName": "amplify-boombet-boombet-91000-deployment",
+          "s3Key": "amplify-builds/accountAuth-6a35496a4d2b4c6a672f-build.zip"
         }
       }
     }

@@ -35,6 +35,13 @@
       "permissions": {
         "setting": "open"
       }
+    },
+    "/accountAuth": {
+      "name": "/accountAuth",
+      "lambdaFunction": "accountAuth",
+      "permissions": {
+        "setting": "open"
+      }
     }
   }
 }

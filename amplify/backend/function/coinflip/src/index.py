@@ -56,11 +56,12 @@ def main(event):
         try:
             side = parser["side"]
             user_id = str(parser["user_id"])
+            verify_code = parser["verify_code"]
             amount = str(parser["amount"])
         except:
             return False, "Invalid request! (1020-1)"
         
-        if side not in range(0,2):
+        if side != "0" and side != "1":
             return False, "Invalid request! (1030)"
         
         side = str(side)
@@ -91,6 +92,23 @@ def main(event):
             
             random_seed = response[0]['random_seed']
             
+            
+            #----------CHECK USER ID VALID
+            query = "SELECT *\
+                    FROM `UM_USER` U\
+                        ,`UM_USER_ACC` UA\
+                    WHERE 1=1\
+                        AND UA.`user_id` = U.`user_id`\
+                        AND UA.`user_id` = %s\
+                        AND UA.`verify_code` = %s"
+
+            cursor.execute(query, [user_id, verify_code])
+            response = cursor.fetchall()
+            
+            if not response:
+                return True, 'Failed to verify User ID!'
+
+
             #----------GET CLIENT SEED
             query = "SELECT `client_seed`\
                     FROM `UM_USER`\
@@ -142,15 +160,16 @@ def main(event):
             conn.commit()
 
             return True, {
-                'bet_id': bet_id,
-                'user_id': user_id,
-                'side': side
+                'bet_id': str(bet_id),
+                'user_id': str(user_id),
+                'side': str(side)
             }
 
 
     elif action == "join":
         try:
             user_id = str(parser["user_id"])
+            verify_code = parser["verify_code"]
             bet_id = str(parser["bet_id"])
         except:
             return False, "Invalid request! (1020-2)"
@@ -160,6 +179,21 @@ def main(event):
             return False, "Database Error! " + str(conn)
         
         with conn.cursor() as cursor:
+            #----------CHECK USER ID VALID
+            query = "SELECT *\
+                    FROM `UM_USER` U\
+                        ,`UM_USER_ACC` UA\
+                    WHERE 1=1\
+                        AND UA.`user_id` = U.`user_id`\
+                        AND UA.`user_id` = %s\
+                        AND UA.`verify_code` = %s"
+
+            cursor.execute(query, [user_id, verify_code])
+            response = cursor.fetchall()
+            
+            if not response:
+                return True, 'Failed to verify User ID!'
+
             #----------GET OPPOSITE SIDE
             query = "SELECT CB.`bet_id`\
                             ,CB.`amount`\
@@ -226,7 +260,7 @@ def main(event):
             if not response:
                 return True, "Bet ID does not exist or has been expired!"
 
-            return True, {'result': response[0]['result']}
+            return True, {'result': str(response[0]['result'])}
             
 
     
@@ -264,9 +298,9 @@ def main(event):
                 data.append({
                             'bet_id': str(res['bet_id']),
                             'user_id': str(res['user_id']),
-                            'side': res['side'],
-                            'amount': res['amount'],
-                            'display_name': res['display_name']
+                            'side': str(res['side']),
+                            'amount': str(res['amount']),
+                            'display_name': str(res['display_name'])
                 })
 
             return True, data

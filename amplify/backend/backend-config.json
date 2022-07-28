@@ -24,6 +24,11 @@
       "build": true,
       "providerPlugin": "awscloudformation",
       "service": "Lambda"
+    },
+    "accountAuth": {
+      "build": true,
+      "providerPlugin": "awscloudformation",
+      "service": "Lambda"
     }
   },
   "api": {
@@ -66,6 +71,14 @@
         {
           "category": "function",
           "resourceName": "roulette",
+          "attributes": [
+            "Name",
+            "Arn"
+          ]
+        },
+        {
+          "category": "function",
+          "resourceName": "accountAuth",
           "attributes": [
             "Name",
             "Arn"
